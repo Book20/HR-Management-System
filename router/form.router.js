@@ -1,0 +1,19 @@
+const formController = require('../controllers/form.controller');
+const checkRole = require('../middlewares/checkRole');
+const emailController = require('../controllers/mail.controller');
+const express = require('express');
+const formRouter = express.Router();
+
+formRouter.post('/forms', checkRole.checkClosedForm, checkRole.checkCanWrite, formController.addNewForm);
+formRouter.put('/forms', checkRole.checkCanUpdate, formController.submitForm);
+formRouter.put('/forms/:id', checkRole.checkCanUpdate, formController.approveForm);
+formRouter.put('/forms/:id/closed', checkRole.checkCanClose, formController.closeForm);
+formRouter.delete('/forms/:id', checkRole.checkCanDelete, formController.deleteForm);
+formRouter.get('/forms', checkRole.checkCanRead, formController.getFormOfUser);
+formRouter.get('/forms/:id', checkRole.checkCanRead, formController.getFormById);
+formRouter.get('/reports/yearly/finish', checkRole.checkRoleGetReport, formController.reportFinishYearlyForm);
+formRouter.get('/reports/basic/finish', checkRole.checkRoleGetReport, formController.reportFinishBasicForm);
+formRouter.get('/reports/basic/incomplete', checkRole.checkRoleGetReport, formController.reportIncompleteBasicForm);
+formRouter.get('/reports/yearly/incomplete', checkRole.checkRoleGetReport, formController.reportIncompleteYearlyForm);
+formRouter.post('/sendmails', emailController.sendMail);
+module.exports = formRouter;
